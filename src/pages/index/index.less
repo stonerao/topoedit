@@ -1,0 +1,335 @@
+#stats {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+body {
+    background: #000;
+}
+
+.full {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+
+}
+
+@width: 330px;
+@border: 1px solid #afafaf;
+
+.text-title {
+    line-height: 32px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.main {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: @width ;
+    background: #fff;
+
+    @h: 40px;
+
+    .main-header {
+        height: @h;
+        line-height: @h;
+        display: flex;
+        justify-content: space-between;
+        padding: 0 30px;
+        font-size: 14px;
+        @active-color: red;
+        border-bottom: @border;
+
+        >li.active {
+            color: @active-color
+        }
+
+        >li {
+            cursor: pointer;
+            transition: all .2s;
+            user-select: none;
+
+            &:hover {
+                color: @active-color
+            }
+        }
+    }
+
+    .main-box {
+        padding: 10px 10px;
+        position: absolute;
+        top: @h;
+        left: 0;
+        bottom: 0;
+        right: 0;
+    }
+
+    .graph {
+        .full;
+        @line-height: 300px;
+
+        .graph-pad {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        .graph-nodes {
+            .graph-pad;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: @line-height;
+            position: absolute;
+
+            ul {
+                margin-top: 5px;
+
+                li {
+                    line-height: 22px;
+                    font-size: 14px;
+                }
+            }
+        }
+
+        .graph-lines {
+            .graph-pad;
+            border-top: @border;
+            position: absolute;
+            height: @line-height;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+    }
+
+    .modes-mesh {
+        display: flex;
+        flex-wrap: wrap;
+
+        li {
+            position: relative;
+            display: inline-block;
+            width: 30%;
+            margin-right: 5%;
+            margin-bottom: 10px;
+            cursor: pointer;
+
+            img {
+                width: 100%;
+                vertical-align: middle;
+            }
+
+            >div {
+                position: relative;
+                height: 120px;
+                width: 100%;
+                overflow: hidden;
+            }
+
+            p {
+                line-height: 20px;
+                font-size: 14px;
+            }
+        }
+
+        li:nth-child(3n) {
+            margin-right: 0;
+        }
+
+    }
+
+}
+
+.right {
+    right: 0;
+    top: 0;
+    bottom: 0;
+    left: @width;
+    position: absolute;
+}
+
+.scenes {
+    >li {
+        width: 100%;
+        margin-bottom: 10px;
+        cursor: pointer;
+
+        >div {
+
+            img {
+                width: 100%;
+                max-height: 300px;
+                cursor: pointer;
+                vertical-align: middle;
+            }
+        }
+
+        >p {
+            line-height: 20px;
+            font-size: 14px;
+        }
+    }
+}
+
+.more {
+    position: absolute;
+    width: 38px;
+    height: 38px;
+    left: 8px;
+    top: 10px;
+    cursor: pointer;
+
+}
+
+.more-main:hover {
+    width: 140px;
+    height: 200px;
+    position: absolute;
+
+    .more-list {
+        display: block;
+    }
+}
+
+.more-list {
+    position: absolute;
+    top: 50px;
+    left: 0;
+    background: rgba(100, 100, 100, 0.5);
+    color: #fff;
+    width: 120px;
+    padding-left: 20px;
+    cursor: pointer;
+    display: none;
+
+    >div {
+        line-height: 38px;
+    }
+
+    >div:hover {
+        color: red;
+    }
+}
+
+.propety {
+    li {
+        display: flex;
+        margin: 12px 0;
+
+        span {
+            width: 70px;
+            font-size: 14px;
+            text-align: right;
+            line-height: 28px;
+        }
+
+        input {
+            height: 24px;
+            flex: 1;
+        }
+
+        select {
+            height: 28px;
+            flex: 1;
+        }
+    }
+}
+
+.mode-center {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    z-index: 30;
+    background: rgba(200, 200, 200, 0.4);
+
+    >div.mode-main {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff;
+        min-width: 400px;
+        padding: 20px;
+
+        li {
+            display: flex;
+            margin-top: 20px;
+
+            span {
+                width: 50px;
+                font-size: 14px;
+                text-align: right;
+                line-height: 28px;
+            }
+
+            input {
+                height: 24px;
+                flex: 1;
+            }
+
+            select {
+                height: 28px;
+                flex: 1;
+            }
+        }
+
+        .mode-btns {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+    }
+
+}
+
+.modes-upload-btn {
+    width: 100%;
+    margin-bottom: 10px;
+    height: 28px;
+}
+
+.cur {
+    cursor: pointer;
+}
+
+.modiflyLine {
+    position: absolute;
+    left: @width + 1;
+    bottom: 0;
+    height: 300px;
+    background: #fff;
+    width: 300px;
+    z-index: 20;
+    padding-left: 10px;
+    padding-right: 40px;
+}
+
+
+
+.modifly-items {
+    li { 
+        width: 100%;
+        line-height: 25px;
+        height: 25px;
+        margin-bottom: 10px;
+
+        input {
+            width: 27%;
+        }
+
+        >div {
+            display: inline-block;
+            cursor: pointer;
+        }
+    }
+
+
+}

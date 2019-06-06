@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>网络安全威胁回放</title>
+	<style>
+
+	</style>
+	<script type="text/javascript" src="./assets/js/three.min.js"></script>
+	<!-- <script type="text/javascript" src="./assets/js/WebGL.js"></script> -->
+	<script type="text/javascript" src="./assets/js/OrbitControls.js"></script>
+	<script type="text/javascript" src="./assets/js/ColladaLoader.js"></script>
+	<script type="text/javascript" src="./assets/js/MTLLoader.js"></script>
+	<script type="text/javascript" src="./assets/js/OBJLoader.js"></script>
+	<script type="text/javascript" src="./assets/js/Stats.js"></script>
+	<script type="text/javascript" src="./assets/js/tween.js"></script>
+	<script type="text/javascript" src="./assets/js/THREE.MeshLine.js"></script>
+
+	<link rel="stylesheet" href="./assets/styles/reset.css">
+	<link rel="stylesheet" href="./assets/styles/animate.css">
+
+</head>
+
+<body style="background:#000;overflow: hidden">
+	<div id="app">
+		<div class="main">
+			<ul class="main-header">
+				<li :class="{'active':model_state===item.id}" @click="tabClick(item.id)" v-for="item in models"
+					:key="item.id">{{item.name}}</li>
+			</ul>
+			<div class="main-box" id="scroll">
+				<!-- 关系 -->
+				<div v-if="model_state===1" class="graph">
+					<div class="graph-nodes">
+						<div class="text-title">关系-节点</div>
+						<ul>
+							<li :key="item.id" v-for="item in nodes">
+								{{item.name}}
+							</li>
+						</ul>
+					</div>
+					<div class="graph-lines">
+						<div class="text-title">关系-连线</div>
+						<ul>
+							<li :key="item.id" v-for="item in lines" class="cur" @click="modifyLine(item)">
+								{{item.src.name}} - {{item.dst.name}}
+							</li>
+						</ul>
+					</div>
+				</div>
+				<!-- 模型 -->
+				<div v-else-if="model_state===2">
+					<!-- <div class="text-title">模型</div> -->
+					<button class="modes-upload-btn" @click="modal=2">上传模型</button>
+					<ul class="modes-mesh">
+						<li @click="addMesh(item)" :class="{'active':modelsActiveMesh===item.id}"
+							v-for="item in modelsMesh" :key="item.index">
+							<div>
+								<img :src="item.img" alt="">
+							</div>
+							<p>{{item.name}}</p>
+						</li>
+					</ul>
+				</div>
+				<!-- 场景 -->
+				<div v-else-if="model_state===3">
+					<ul class="scenes">
+						<li v-for="item in scenesList" :key="item.id">
+							<div><img :src="item.img" alt=""></div>
+							<p>
+								{{item.name}}
+							</p>
+						</li>
+					</ul>
+				</div>
+				<!-- 属性 -->
+				<div v-else>
+					<ul class="propety">
+						<li>
+							<span>X：</span>
+							<input type="text" v-model="currentNodeOptions.x">
+						</li>
+						<li>
+							<span>Y：</span>
+							<input type="text" v-model="currentNodeOptions.y">
+						</li>
+						<li>
+							<span>Z：</span>
+							<input type="text" v-model="currentNodeOptions.z">
+						</li>
+						<li>
+							<span>rotationX：</span>
+							<input type="text" v-model="currentNodeOptions.rotationX">
+						</li>
+						<li>
+							<span>rotationY：</span>
+							<input type="text" v-model="currentNodeOptions.rotationY">
+						</li>
+						<li>
+							<span>rotationZ：</span>
+							<input type="text" v-model="currentNodeOptions.rotationZ">
+						</li>
+						<li>
+							<span>name：</span>
+							<input type="text" v-model="currentNodeOptions.name">
+						</li>
+						<li>
+							<span>type：</span>
+							<select v-model="currentNodeOptions.type">
+								<option v-for="item in modelsMesh" :key="item.id" :value="item.id">{{item.name}}
+								</option>
+							</select>
+						</li>
+						<li>
+							<span>mtl：</span>
+							<input type="text" v-model="currentNodeOptions.mtl">
+						</li>
+						<li>
+							<span>width：</span>
+							<input type="text" v-model="currentNodeOptions.width">
+						</li>
+						<li>
+							<span>height：</span>
+							<input type="text" v-model="currentNodeOptions.height">
+						</li>
+						<li>
+							<span> mouse：</span>
+							<input type="text" v-model="currentClickPosition" disabled>
+						</li>
+						<li>
+							<span>操作：</span>
+							<button @click="deletebtn">删除</button>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="mode-center" v-if="modal">
+			<div class="mode-main" v-if="modal===1">
+				<div class="text-title">创建</div>
+				<ul>
+					<li>
+						<span>name：</span>
+						<input type="text" v-model="createOptions.name">
+					</li>
+					<li>
+						<span>关联：</span>
+						<select name="" id="" v-model="graphLineNode">
+							<option value="">无</option>
+							<option :key="item.id" :value="item.id" v-for="item in nodes">{{item.name}}</option>
+						</select>
+					</li>
+				</ul>
+				<div class="mode-btns">
+					<button @click="modal=null">取消</button>
+					<button @click="createModal">确定</button>
+				</div>
+			</div>
+			<div class="mode-main" v-if="modal===2">
+				<div class="text-title">上传</div>
+				<ul>
+					<li>
+						<span>name：</span>
+						<label for="objUpload"><span>点击上传</span></label>
+						<input type="file" id="objUpload" hidden @change="fileUpload">
+					</li>
+				</ul>
+				<div>
+					<canvas id="uploadCanvas"></canvas>
+				</div>
+				<div class="mode-btns">
+					<button @click="modal=null">取消</button>
+					<button>确定</button>
+				</div>
+			</div>
+			<div class="mode-main" v-if="modal===3">
+				<div class="text-title">导入</div>
+				<ul>
+					<li>
+						<textarea v-model="importHTML" name="" id="" cols="60" rows="10"></textarea>
+					</li>
+				</ul>
+				<div class="mode-btns">
+					<button @click="modal=null">取消</button>
+					<button @click="imports">确定</button>
+				</div>
+			</div>
+		</div>
+		<div class="modiflyLine" v-if="currentLine&&model_state==1">
+			<div class="text-title">连线</div>
+			<ul class="modifly-items">
+				<div v-if="currentLine.src">
+					<select name="" id="" v-model="currentLine.src.id">
+						<option :value="item.id" v-for="item in nodes">{{item.name}}</option>
+					</select>
+					<select name="" id="" v-model="currentLine.dst.id">
+						<option :value="item.id" v-for="item in nodes">{{item.name}}</option>
+					</select>
+				</div>
+				<li v-for="(item,index) in currentLine.lines" :key="index">
+					<input type="text" placeholder="x" v-model="item.x">
+					<input type="text" placeholder="y" v-model="item.y">
+					<input type="text" placeholder="z" v-model="item.z">
+					<div v-if="index < currentLine.lines.length-1" @click="addCurrentLine(index)">+</div>
+					<div v-if="index < currentLine.lines.length-1" @click="deleteCurrentLine(index)">-</div>
+				</li>
+			</ul>
+			<input type="text" v-model="currentClickPosition" disabled>
+			<div>
+				<button @click="currentLineChange" v-if="currentLine.lines">确定</button>
+			</div>
+		</div>
+		<div class="right">
+			<div class="more-main">
+				<img class="more" :src="more" alt="">
+				<div class="more-list">
+					<div v-for="item in operating" :key="item.id" @click="optionsEvent(item.id)">
+						{{item.name}}
+					</div>
+				</div>
+			</div>
+			<canvas style="width:1000px;height:800px" id="canvas"></canvas>
+		</div>
+	</div>
+</body>
+
+</html>
