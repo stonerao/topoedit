@@ -325,6 +325,9 @@ let VM = new Vue({
                 case 3:
                     this.modal = 3;
                     break;
+                case 5:
+                    topo.clearMesh()
+                    break;
             }
         },
         export() {

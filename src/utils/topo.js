@@ -407,10 +407,9 @@ export default class Topo extends base {
                 new THREE.Vector3(dstNode.x, dstNode.y, dstNode.z),
             );
         }
-        console.log(srcNode)
-        console.log(dstNode)
         var line = new THREE.Line(geometry, material);
         this.scene.add(line);
+        line.MeshType = "line"
         line.options = {
             src: srcNode,
             dst: dstNode
@@ -428,11 +427,7 @@ export default class Topo extends base {
             this.state.lineWach(this.state.lines)
         }
     }
-    addLine(item) {
-
-    }
     addMesh = (position, _mesh) => {
-        console.log(_mesh)
         let { type, img } = _mesh;
         let map = null;
         if (typesId.indexOf(type) !== -1) {
@@ -529,6 +524,17 @@ export default class Topo extends base {
             );
         })
         currentLine.geometry = geometry
+    }
+    clearMesh = () => {
+        // 清楚所有节点
+        let child = this.scene.children;
+        let index = child.length - 1;
+        while (index >= 0) {
+            if (child[index].MeshType === "model" || child[index].MeshType === "line") {
+                this.dispose(child[index])
+            }
+            index--;
+        }
     }
     onWindowResize = () => {
         this.camera.aspect = window.innerWidth / (window.innerHeight - 3);
