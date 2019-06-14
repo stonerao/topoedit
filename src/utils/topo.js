@@ -442,7 +442,7 @@ export default class Topo extends base {
         } else {
             basic = { color: 0x00ff00 }
         }
-        var geometry = new THREE.BoxGeometry(20, map ? 2 : 20, 20);
+        var geometry = new THREE.BoxGeometry(20, map ? 20 : 20, 20);
         var material = new THREE.MeshBasicMaterial(basic);
         var cube = new THREE.Mesh(geometry, material);
         for (let key in position) {
